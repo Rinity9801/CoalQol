@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "coalqol",
+  "version": "${version}",
+  "name": "Coal QOL",
+  "description": "A toggleable auto-clicker with timer-based slot switching functionality",
+  "authors": [
+    "alexdong"
+  ],
+  "contact": {
+    "homepage": "https://github.com/alexdong/coal-qol",
+    "sources": "https://github.com/alexdong/coal-qol"
+  },
+  "license": "MIT",
+  "icon": "assets/coalqol/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "forfun.coalqol.client.CoalqolDataGenerator"
+    ],
+    "client": [
+      "forfun.coalqol.client.CoalqolClient"
+    ],
+    "main": [
+      "forfun.coalqol.Coalqol"
+    ]
+  },
+  "mixins": [
+    "coalqol.mixins.json",
+    {
+      "config": "coalqol.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}",
+    "java": ">=21"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

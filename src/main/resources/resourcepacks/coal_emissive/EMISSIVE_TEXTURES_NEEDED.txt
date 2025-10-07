@@ -1,0 +1,17 @@
+TO COMPLETE THIS RESOURCE PACK:
+
+You need to add emissive texture files in:
+  assets/minecraft/textures/block/
+
+Required files:
+1. coal_ore_e.png - Copy coal_ore.png from vanilla Minecraft and make it brighter/white where you want glow
+2. deepslate_coal_ore_e.png - Copy deepslate_coal_ore.png and make it brighter/white where you want glow
+
+How to create them:
+1. Extract coal_ore.png and deepslate_coal_ore.png from your Minecraft jar or download from vanilla assets
+2. Open in image editor (GIMP, Photoshop, Paint.NET, etc.)
+3. Make the coal spots pure white or very bright
+4. Save as coal_ore_e.png and deepslate_coal_ore_e.png
+5. Place them in assets/minecraft/textures/block/
+
+The "_e" suffix tells ETF mod these are emissive overlays that will glow.
