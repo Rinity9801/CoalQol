@@ -16,6 +16,8 @@ public class ConfigScreen extends Screen {
     private ButtonWidget rodSwapToggle;
     private ButtonWidget secondDrillToggle;
     private SliderWidget secondDrillSlotSlider;
+    private SliderWidget lobbyFinderMaxDaySlider;
+    private SliderWidget lobbyFinderDelaySlider;
 
     public ConfigScreen(Screen parent, Config config) {
         super(Text.literal("Coal QOL Settings"));
@@ -26,7 +28,7 @@ public class ConfigScreen extends Screen {
     @Override
     protected void init() {
         int centerX = this.width / 2;
-        int startY = 40;
+        int startY = 60;
         this.miningSlotSlider = new SliderWidget(
                 centerX - 150,
                 startY,
@@ -110,11 +112,54 @@ public class ConfigScreen extends Screen {
         this.secondDrillSlotSlider.active = config.enableSecondDrill;
         this.addDrawableChild(this.secondDrillSlotSlider);
 
+        this.lobbyFinderMaxDaySlider = new SliderWidget(
+                centerX - 150,
+                startY + 250,
+                300,
+                20,
+                Text.literal("Lobby Finder Max Day: " + config.lobbyFinderMaxDay),
+                (config.lobbyFinderMaxDay - 1) / 99.0
+        ) {
+            @Override
+            protected void updateMessage() {
+                int day = (int) Math.round(this.value * 99) + 1;
+                this.setMessage(Text.literal("Lobby Finder Max Day: " + day));
+            }
+
+            @Override
+            protected void applyValue() {
+                config.lobbyFinderMaxDay = (int) Math.round(this.value * 99) + 1;
+            }
+        };
+        this.addDrawableChild(this.lobbyFinderMaxDaySlider);
+
+        this.lobbyFinderDelaySlider = new SliderWidget(
+                centerX - 150,
+                startY + 300,
+                300,
+                20,
+                Text.literal("Lobby Finder Delay: " + config.lobbyFinderDelay + "s"),
+                (config.lobbyFinderDelay - 1) / 14.0
+        ) {
+            @Override
+            protected void updateMessage() {
+                int delay = (int) Math.round(this.value * 14) + 1;
+                this.setMessage(Text.literal("Lobby Finder Delay: " + delay + "s"));
+            }
+
+            @Override
+            protected void applyValue() {
+                config.lobbyFinderDelay = (int) Math.round(this.value * 14) + 1;
+            }
+        };
+        this.addDrawableChild(this.lobbyFinderDelaySlider);
+
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> {
             config.save();
             AutoClickerManager.updateConfig(config);
+            LobbyFinderManager.updateConfig(config);
             this.close();
-        }).dimensions(centerX - 100, startY + 250, 200, 20).build());
+        }).dimensions(centerX - 100, startY + 350, 200, 20).build());
     }
 
     @Override
@@ -130,7 +175,7 @@ public class ConfigScreen extends Screen {
         );
 
         int centerX = this.width / 2;
-        int startY = 40;
+        int startY = 60;
 
         context.drawTextWithShadow(
                 this.textRenderer,
@@ -170,6 +215,22 @@ public class ConfigScreen extends Screen {
                 centerX - 150,
                 startY + 185,
                 config.enableSecondDrill ? 0xAAAAAA : 0x666666
+        );
+
+        context.drawTextWithShadow(
+                this.textRenderer,
+                Text.literal("Lobby finder maximum day:"),
+                centerX - 150,
+                startY + 235,
+                0xAAAAAA
+        );
+
+        context.drawTextWithShadow(
+                this.textRenderer,
+                Text.literal("Lobby finder delay (seconds):"),
+                centerX - 150,
+                startY + 285,
+                0xAAAAAA
         );
 
         super.render(context, mouseX, mouseY, delta);

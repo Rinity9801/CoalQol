@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -23,6 +24,7 @@ public class CoalqolClient implements ClientModInitializer {
     public void onInitializeClient() {
         config = Config.load();
         AutoClickerManager.updateConfig(config);
+        LobbyFinderManager.updateConfig(config);
 
         toggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.coalqol.toggle",
@@ -37,7 +39,27 @@ public class CoalqolClient implements ClientModInitializer {
                         MinecraftClient client = MinecraftClient.getInstance();
                         client.send(() -> client.setScreen(new ConfigScreen(client.currentScreen, config)));
                         return 1;
-                    }));
+                    })
+                    .then(ClientCommandManager.literal("lobbyfinder")
+                            .executes(context -> {
+                                LobbyFinderManager.toggle();
+                                MinecraftClient client = MinecraftClient.getInstance();
+                                if (client.player != null) {
+                                    client.player.sendMessage(
+                                            net.minecraft.text.Text.literal("Lobby Finder " +
+                                                    (LobbyFinderManager.isEnabled() ? "enabled" : "disabled")),
+                                            false
+                                    );
+                                }
+                                return 1;
+                            })));
+        });
+
+        ClientReceiveMessageEvents.GAME.register((message, overlay) -> {
+            String messageText = message.getString();
+            if (messageText.contains("You're already sitting on this island!")) {
+                LobbyFinderManager.onIslandMessage();
+            }
         });
 
         HudRenderCallback.EVENT.register(new HudRenderer());
@@ -55,6 +77,7 @@ public class CoalqolClient implements ClientModInitializer {
             }
 
             AutoClickerManager.tick();
+            LobbyFinderManager.tick();
         });
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {

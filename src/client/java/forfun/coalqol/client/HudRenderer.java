@@ -42,5 +42,18 @@ public class HudRenderer implements HudRenderCallback {
             0xFFFFFF,
             true
         );
+
+        String lobbyFinderStatus = LobbyFinderManager.getStatusMessage();
+        if (lobbyFinderStatus != null) {
+            int statusWidth = client.textRenderer.getWidth(lobbyFinderStatus);
+            drawContext.drawText(
+                client.textRenderer,
+                lobbyFinderStatus,
+                x - statusWidth / 2,
+                y + 15,
+                0x00FF00,
+                true
+            );
+        }
     }
 }

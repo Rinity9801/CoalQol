@@ -17,6 +17,8 @@ public class Config {
     public boolean enableRodSwap = true;
     public boolean enableSecondDrill = false;
     public int secondDrillSlot = 3;
+    public int lobbyFinderMaxDay = 7;
+    public int lobbyFinderDelay = 5;
 
     public static Config load() {
         if (Files.exists(CONFIG_PATH)) {
